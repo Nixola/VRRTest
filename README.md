@@ -11,4 +11,4 @@ Assuming the runtime is installed and in PATH, you can run it with `love <dir>`,
 
 ## Screenshots
 I don't know why'd you want any. Still, here's one.  
-![Main and only screen of the tool](https://static.nixo.la/i/1550422559.png)
+![Main and only screen of the tool](https://static.nixo.la/i/1550531257.png)
