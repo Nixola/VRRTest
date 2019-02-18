@@ -7,14 +7,19 @@ local WIDTH, HEIGHT
 
 local fullscreen
 
+local vsync
+
 local str = [[
 target FPS: %d (change with up/down arrow)
 actual FPS: %d
 steps: %d (change with left/right arrow)
 fullscreen: %s (toggle with f)
 busy wait: %s (toggle with b)
+vsync: %s (toggle with v+s)
+
 Freesync will only work when the application is fullscreen on Linux.
-Busy waiting is more precise, but much heavier on processor and battery.]]
+Busy waiting is more precise, but much heavier on processor and battery.
+Vsync should eliminate tearing, but increases input lag and adds no smoothness.]]
 
 local y
 
@@ -36,10 +41,12 @@ love.load = function()
     width = WIDTH / steps
     current = 0
 
+
     love.graphics.setBackgroundColor(3/8, 3/8, 3/8)
     love.graphics.setColor(5/8, 5/8, 5/8)
 
     fullscreen = flags.fullscreen
+    vsync = flags.vsync > 0
     love.keyboard.setKeyRepeat(true)
 
 end
@@ -71,7 +78,7 @@ end
 
 love.draw = function()
 
-    local str = string.format(str, fps, love.timer.getFPS(), steps, tostring(fullscreen), tostring(love.busy))
+    local str = string.format(str, fps, love.timer.getFPS(), steps, tostring(fullscreen), tostring(love.busy), tostring(vsync))
 
     love.graphics.rectangle("fill", width * current, y, width, HEIGHT)
     love.graphics.print(str)
@@ -84,6 +91,9 @@ end
 
 
 love.keypressed = function(k, kk)
+
+    local s = love.keyboard.isDown("s")
+    local v = love.keyboard.isDown("v")
 
     if kk == "up" then
         fps = fps + 1
@@ -104,6 +114,12 @@ love.keypressed = function(k, kk)
         fullscreen = not fullscreen
     elseif kk == "b" then
         love.busy = not love.busy
+    elseif (kk == "v" and s) or (kk == "s" and v) then
+        local w, h, flags = love.window.getMode()
+        flags.vsync = (flags.vsync == 0) and 1 or 0
+        love.window.setMode(w, h, flags)
+        flags = select(3, love.window.getMode())
+        vsync = flags.vsync > 0
     end
     sanitize()
 end
