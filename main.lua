@@ -31,7 +31,7 @@ love.load = function()
     WIDTH, HEIGHT = love.graphics.getDimensions()
     local flags = select(3, love.window.getMode())
 
-    y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight()
+    y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight() + 8
 
     fps = flags.refreshrate - 5
     fps = (fps > 0) and fps or 56
@@ -81,7 +81,7 @@ love.draw = function()
     local str = string.format(str, fps, love.timer.getFPS(), steps, tostring(fullscreen), tostring(love.busy), tostring(vsync))
 
     love.graphics.rectangle("fill", width * current, y, width, HEIGHT)
-    love.graphics.print(str)
+    love.graphics.print(str, 8, 8)
     --[[
     love.graphics.print(fps, 0, 0)
     love.graphics.print(steps, 0, 16)
