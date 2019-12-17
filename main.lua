@@ -90,20 +90,20 @@ love.draw = function()
 end
 
 
-love.keypressed = function(k, kk)
+love.keypressed = function(key, keycode)
 
     local s = love.keyboard.isDown("s")
     local v = love.keyboard.isDown("v")
 
-    if kk == "up" then
+    if key == "up" then
         fps = fps + 1
-    elseif kk == "down" then
+    elseif key == "down" then
         fps = fps - 1
-    elseif kk == "left" then
+    elseif key == "left" then
         steps = steps - 1
-    elseif kk == "right" then
+    elseif key == "right" then
         steps = steps + 1
-    elseif kk == "f" then
+    elseif key == "f" then
         if fullscreen then
             love.window.setFullscreen(false)
             love.window.setPosition(1, 1)
@@ -112,9 +112,9 @@ love.keypressed = function(k, kk)
             love.window.setPosition(0, 0)
         end
         fullscreen = not fullscreen
-    elseif kk == "b" then
+    elseif key == "b" then
         love.busy = not love.busy
-    elseif (kk == "v" and s) or (kk == "s" and v) then
+    elseif (key == "v" and s) or (key == "s" and v) then
         local w, h, flags = love.window.getMode()
         flags.vsync = (flags.vsync == 0) and 1 or 0
         love.window.setMode(w, h, flags)
