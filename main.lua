@@ -25,6 +25,13 @@ Vsync should eliminate tearing, but increases input lag and adds no smoothness.]
 local y
 
 
+newBars = function()
+    width = WIDTH / (num * 3)
+    for i = 1, num do
+        bars[i] = WIDTH / num * (i - 1)
+    end
+end
+
 love.load = function()
 
     love.busy = false
@@ -40,12 +47,8 @@ love.load = function()
     lastUpdate = 0
     speed = 10
     num = 3
-    width = WIDTH / 20
     bars = {}
-    for i = 1, num do
-        bars[i] = WIDTH / num * (i - 1)
-    end
-
+    newBars()
 
     love.graphics.setBackgroundColor(3/8, 3/8, 3/8)
     love.graphics.setColor(5/8, 5/8, 5/8)
@@ -76,7 +79,7 @@ love.update = function()
     lastUpdate = love.timer.getTime()
 
     for i = 1, num do
-        bars[i] = (bars[i] + speed * width * frameTime) % (WIDTH)
+        bars[i] = (bars[i] + speed / 10 * WIDTH * frameTime) % (WIDTH)
     end
 end
 
@@ -116,15 +119,11 @@ love.keypressed = function(key, keycode)
     elseif key == "-" or key == "_" then
         num = num - 1
         num = math.max(1, num)
-        for i = 1, num do
-            bars[i] = WIDTH / num * (i - 1)
-        end
+        newBars()
     elseif key == "=" or key == "+" then
         num = num + 1
         num = math.max(1, num)
-        for i = 1, num do
-            bars[i] = WIDTH / num * (i - 1)
-        end
+        newBars()
     elseif key == "f" then
         if fullscreen then
             love.window.setFullscreen(false)
