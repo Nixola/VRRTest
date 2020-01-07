@@ -21,7 +21,7 @@ fullscreen: %s (toggle with ctrl+f)
 busy wait: %s (toggle with b)
 vsync: %s (toggle with s)
 fluctuating: %s (toggle with f, change max with ctrl + up/down arrow, change speed with ctrl + left/right arrow)
-random stutter: %s [%dms] (toggle with r, change max amount with ctrl + +/-, shift to change faster)
+random stutter: %s [%dms] (toggle with r, change max amount with alt + up/down arrow, shift to change faster)
 
 Freesync will only work when the application is fullscreen on Linux.
 Busy waiting is more precise, but much heavier on processor and battery.
@@ -146,6 +146,7 @@ love.keypressed = function(key, keycode)
 
     local ctrl = love.keyboard.isDown("lctrl", "rctrl")
     local shift = love.keyboard.isDown("lshift", "rshift")
+    local alt = love.keyboard.isDown("ralt", "lalt")
 
     if ctrl then
         if key == "up" then
@@ -156,10 +157,6 @@ love.keypressed = function(key, keycode)
             fpsSpeed = fpsSpeed - 1
         elseif key == "right" then
             fpsSpeed = fpsSpeed + 1
-        elseif key == "+" then
-            randomAmount = randomAmount + (shift and 5 or 1)
-        elseif key == "-" then
-            randomAmount = randomAmount - (shift and 5 or 1)
         elseif key == "f" then
             if fullscreen then
                 love.window.setFullscreen(false)
@@ -169,6 +166,12 @@ love.keypressed = function(key, keycode)
                 love.window.setPosition(0, 0)
             end
             fullscreen = not fullscreen
+        end
+    elseif alt then
+        if key == "up" then
+            randomAmount = randomAmount + (shift and 5 or 1)
+        elseif key == "down" then
+            randomAmount = randomAmount - (shift and 5 or 1)
         end
     else
         if key == "up" then
