@@ -25,7 +25,8 @@ random stutter: %s [%dms] (toggle with r, change max amount with alt + up/down a
 
 Freesync will only work when the application is fullscreen on Linux.
 Busy waiting is more precise, but much heavier on processor and battery.
-Vsync should eliminate tearing, but increases input lag and adds no smoothness.]]
+Vsync should eliminate tearing, but increases input lag and adds no smoothness.
+You can quit this program with the Escape or Q keys.]]
 
 local y
 
