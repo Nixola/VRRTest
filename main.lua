@@ -204,6 +204,8 @@ love.keypressed = function(key, keycode)
         elseif key == "r" then
             random = not random
             randomTime = 0
+        elseif key == "escape" or key == "q" then
+            love.event.quit()
         end
     end
     sanitize()
