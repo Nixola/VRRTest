@@ -7,6 +7,8 @@ local fpsMax, fpsTimer, fluctuating, fpsSpeed
 
 local random, randomAmount, randomTime
 
+local displays, display
+
 local fullscreen
 
 local vsync
@@ -33,6 +35,18 @@ local loadScenes = function(width, height)
     end
 end
 
+local setDisplay = function(n)
+    local new_displays = love.window.getDisplayCount()
+    n = (n-1) % new_displays + 1
+    if n == display and new_displays == displays then return end
+    WIDTH, HEIGHT = love.graphics.getDimensions(n)
+    love.graphics.setMode(WIDTH, HEIGHT, {display = n, fullscreen = fullscreen})
+    display = n
+    displays = new_displays
+end
+
+
+
 local str = [[
 actual FPS: %d
 target FPS: %d (change with up/down arrow)
@@ -41,6 +55,7 @@ busy wait: %s (toggle with b)
 vsync: %s (toggle with s)
 fluctuating: %s (toggle with f, change max with ctrl + up/down arrow, change speed with ctrl + left/right arrow)
 random stutter: %s [%dms] (toggle with r, change max amount with alt + up/down arrow, shift to change faster)
+display: %d/%d (switch with alt + left/right arrow)
 selected scene: %d (%s)
 
 Freesync will only work when the application is fullscreen on Linux.
@@ -57,6 +72,7 @@ love.load = function()
     love.busy = false
 
     WIDTH, HEIGHT = love.graphics.getDimensions()
+
     local flags = select(3, love.window.getMode())
 
     y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight() + 8
@@ -72,6 +88,9 @@ love.load = function()
     random = false
     randomTime = 0
     randomAmount = 0
+
+    displays = love.window.getDisplayCount()
+    display = 1
 
     frameTime = 1 / fps
     lastUpdate = 0
@@ -123,6 +142,7 @@ love.draw = function()
         tostring(vsync),
         fstr,
         tostring(random), randomAmount,
+        display, displays,
         scene,
         scenes[scene].name)
 
@@ -147,6 +167,7 @@ love.keypressed = function(key, keycode)
     local ctrl = love.keyboard.isDown("lctrl", "rctrl")
     local shift = love.keyboard.isDown("lshift", "rshift")
     local alt = love.keyboard.isDown("ralt", "lalt")
+    print(alt)
 
     if ctrl then
         if key == "up" then
@@ -172,6 +193,10 @@ love.keypressed = function(key, keycode)
             randomAmount = randomAmount + (shift and 5 or 1)
         elseif key == "down" then
             randomAmount = randomAmount - (shift and 5 or 1)
+        elseif key == "left" then
+            setDisplay(display - 1)
+        elseif key == "right" then
+            setDisplay(display + 1)
         end
     else
         if key == "up" then
