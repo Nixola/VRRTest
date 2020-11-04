@@ -39,8 +39,8 @@ local setDisplay = function(n)
     local new_displays = love.window.getDisplayCount()
     n = (n-1) % new_displays + 1
     if n == display and new_displays == displays then return end
-    WIDTH, HEIGHT = love.graphics.getDimensions(n)
-    love.graphics.setMode(WIDTH, HEIGHT, {display = n, fullscreen = fullscreen})
+    WIDTH, HEIGHT = love.window.getDesktopDimensions(n)
+    love.window.setMode(WIDTH, HEIGHT, {display = n, fullscreen = fullscreen})
     display = n
     displays = new_displays
 end
