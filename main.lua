@@ -16,6 +16,8 @@ local vsync
 local WIDTH, HEIGHT
 
 local scenes = {}
+scenes.x = 0
+scenes.y = 0
 local scene = 1
 local loadScenes = function(width, height)
     for i, file in ipairs(love.filesystem.getDirectoryItems("scenes")) do
@@ -44,7 +46,7 @@ local setDisplay = function(n)
     display = n
     displays = new_displays
     for i, scene in ipairs(scenes) do
-        scene.load(WIDTH, HEIGHT - y)
+        scene.load(WIDTH - scenes.x, HEIGHT - scenes.y)
     end
 end
 
@@ -67,9 +69,6 @@ Vsync should eliminate tearing, but increases input lag and adds no smoothness.
 You can quit this program with the Escape or Q keys.]]
 local sceneStr
 
-
-local y
-
 love.load = function()
 
     love.busy = false
@@ -78,7 +77,7 @@ love.load = function()
 
     local flags = select(3, love.window.getMode())
 
-    y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight() + 8
+    scenes.y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight() + 8
 
     fps = flags.refreshrate - 5
     fps = (fps > 0) and fps or 56
@@ -102,7 +101,7 @@ love.load = function()
     vsync = flags.vsync > 0
     love.keyboard.setKeyRepeat(true)
 
-    loadScenes(WIDTH, HEIGHT - y)
+    loadScenes(WIDTH - scenes.x, HEIGHT - scenes.y)
 
     color.setColor(scenes[scene].color.fg, scenes[scene].color.bg)
 end
@@ -151,7 +150,7 @@ love.draw = function()
 
     love.graphics.print(str, 8, 8)
     love.graphics.print(scenes[scene].str, WIDTH - scenes[scene].strWidth - 8, 8)
-    scenes[scene].draw(0, y)
+    scenes[scene].draw(scenes.x, scenes.y)
 
 end
 
@@ -170,7 +169,6 @@ love.keypressed = function(key, keycode)
     local ctrl = love.keyboard.isDown("lctrl", "rctrl")
     local shift = love.keyboard.isDown("lshift", "rshift")
     local alt = love.keyboard.isDown("ralt", "lalt")
-    print(alt)
 
     if ctrl then
         if key == "up" then
