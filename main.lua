@@ -40,7 +40,7 @@ local setDisplay = function(n)
     n = (n-1) % new_displays + 1
     if n == display and new_displays == displays then return end
     WIDTH, HEIGHT = love.window.getDesktopDimensions(n)
-    love.window.setMode(WIDTH, HEIGHT, {display = n, fullscreen = fullscreen})
+    love.window.setMode(WIDTH, HEIGHT, {display = n, fullscreen = fullscreen, vsync = vsync and 1 or 0})
     display = n
     displays = new_displays
 end
@@ -195,8 +195,10 @@ love.keypressed = function(key, keycode)
             randomAmount = randomAmount - (shift and 5 or 1)
         elseif key == "left" then
             setDisplay(display - 1)
+            return
         elseif key == "right" then
             setDisplay(display + 1)
+            return
         end
     else
         if key == "up" then
