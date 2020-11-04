@@ -53,6 +53,7 @@ end
 
 scene.resize = function(w, h)
     WIDTH, HEIGHT = w, h
+    sanitize()
 end
 
 scene.update = function(dt, fps)
