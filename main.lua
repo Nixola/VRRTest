@@ -1,41 +1,55 @@
 require "run"
 
+local color = require "colorFade"
+
 local fps, frameTime, lastUpdate
 local fpsMax, fpsTimer, fluctuating, fpsSpeed
 
 local random, randomAmount, randomTime
 
-local speed, num, bars, width
-local WIDTH, HEIGHT
-
 local fullscreen
 
 local vsync
 
+local WIDTH, HEIGHT
+
+local scenes = {}
+local scene = 1
+local loadScenes = function(width, height)
+    for i, file in ipairs(love.filesystem.getDirectoryItems("scenes")) do
+        local f, err = love.filesystem.load("scenes/" .. file)
+        if not f then
+            print("Could not load", file..":", err)
+        else
+            f, err = pcall(f)
+            if not f then
+                print("Could not run", file..":", err)
+            else
+                scenes[i] = err
+                err.load(width, height)
+                print(i, err)
+            end
+        end
+    end
+end
+
 local str = [[
-target FPS: %d (change with up/down arrow)
 actual FPS: %d
-speed: %d (change with left/right arrow)
-number of bars: %d (change with -/+)
+target FPS: %d (change with up/down arrow)
 fullscreen: %s (toggle with ctrl+f)
 busy wait: %s (toggle with b)
 vsync: %s (toggle with s)
 fluctuating: %s (toggle with f, change max with ctrl + up/down arrow, change speed with ctrl + left/right arrow)
 random stutter: %s [%dms] (toggle with r, change max amount with alt + up/down arrow, shift to change faster)
+selected scene: %d (%s)
 
 Freesync will only work when the application is fullscreen on Linux.
 Busy waiting is more precise, but much heavier on processor and battery.
 Vsync should eliminate tearing, but increases input lag and adds no smoothness.]]
+local sceneStr
+
 
 local y
-
-
-newBars = function()
-    width = WIDTH / (num * 3)
-    for i = 1, num do
-        bars[i] = WIDTH / num * (i - 1)
-    end
-end
 
 love.load = function()
 
@@ -60,18 +74,14 @@ love.load = function()
 
     frameTime = 1 / fps
     lastUpdate = 0
-    speed = 10
-    num = 3
-    bars = {}
-    newBars()
-
-    love.graphics.setBackgroundColor(3/8, 3/8, 3/8)
-    love.graphics.setColor(5/8, 5/8, 5/8)
 
     fullscreen = flags.fullscreen
     vsync = flags.vsync > 0
     love.keyboard.setKeyRepeat(true)
 
+    loadScenes(WIDTH, HEIGHT - y)
+
+    color.setColor(scenes[scene].color.fg, scenes[scene].color.bg)
 end
 
 
@@ -81,7 +91,7 @@ love.update = function(dt)
         while lastUpdate + frameTime + randomTime > love.timer.getTime() do end
     else
         while lastUpdate + frameTime + randomTime > love.timer.getTime() do
-            love.timer.sleep(0.001)
+            love.timer.sleep(0)
         end
     end
     lastUpdate = love.timer.getTime()
@@ -96,9 +106,8 @@ love.update = function(dt)
         randomTime = (love.math.random() - 0.5 ) * randomAmount/1000
     end
 
-    for i = 1, num do
-        bars[i] = (bars[i] + speed * dt * WIDTH / 20) % (WIDTH)
-    end
+    scenes[scene].update(dt, fps)
+    color.update(dt)
 end
 
 
@@ -106,27 +115,19 @@ love.draw = function()
     local fstr = fluctuating and ("true [max: %d, speed: %d, current: %d]"):format(fpsMax, fpsSpeed, fpsCur) or "false"
 
     local str = string.format(str, 
-        fps,
         love.timer.getFPS(),
-        speed,
-        num,
+        fps,
         tostring(fullscreen),
         tostring(love.busy),
         tostring(vsync),
         fstr,
-        tostring(random), randomAmount)
+        tostring(random), randomAmount,
+        scene,
+        scenes[scene].name)
 
-    for i = 1, num do
-        love.graphics.rectangle("fill", bars[i], y, width, HEIGHT)
-        if bars[i] > WIDTH - width then
-            love.graphics.rectangle("fill", bars[i] - WIDTH, y, width, HEIGHT)
-        end
-    end
     love.graphics.print(str, 8, 8)
-    --[[
-    love.graphics.print(fps, 0, 0)
-    love.graphics.print(speed, 0, 16)
-    love.graphics.print(tostring(fullscreen), 0, 32)--]]
+    love.graphics.print(scenes[scene].str, WIDTH - scenes[scene].strWidth - 8, 8)
+    scenes[scene].draw(0, y)
 
 end
 
@@ -138,8 +139,6 @@ sanitize = function()
     fpsSpeed = math.max(1, fpsSpeed)
 
     randomAmount = math.max(math.min(randomAmount, 1000), 0)
-
-    speed = math.max(1, speed)
 end
 
 love.keypressed = function(key, keycode)
@@ -178,18 +177,6 @@ love.keypressed = function(key, keycode)
             fps = fps + 1
         elseif key == "down" then
             fps = fps - 1
-        elseif key == "left" then
-            speed = speed - 1
-        elseif key == "right" then
-            speed = speed + 1
-        elseif key == "-" or key == "_" then
-            num = num - 1
-            num = math.max(1, num)
-            newBars()
-        elseif key == "=" or key == "+" then
-            num = num + 1
-            num = math.max(1, num)
-            newBars()
         elseif key == "f" then
             fluctuating = not fluctuating
             fpsTimer = 0
@@ -206,5 +193,11 @@ love.keypressed = function(key, keycode)
             randomTime = 0
         end
     end
+    if tonumber(key) and scenes[tonumber(key)] then
+        scene = tonumber(key)
+        color.setTarget(scenes[scene].color.fg, scenes[scene].color.bg)
+        return
+    end
+    scenes[scene].keypressed(key, keycode)
     sanitize()
 end
