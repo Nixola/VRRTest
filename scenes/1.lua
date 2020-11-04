@@ -49,6 +49,8 @@ scene.keypressed = function(key, keycode, isRepeat)
     local shift = love.keyboard.isDown("lshift", "rshift")
     local alt = love.keyboard.isDown("ralt", "lalt")
 
+    if ctrl or shift or alt then return end
+    
     if key == "-" then
         num = num - 1
         num = math.max(1, num)

@@ -75,6 +75,12 @@ scene.draw = function(x, y)
 end
 
 scene.keypressed = function(key, keycode, isRepeat)
+    local ctrl = love.keyboard.isDown("lctrl", "rctrl")
+    local shift = love.keyboard.isDown("lshift", "rshift")
+    local alt = love.keyboard.isDown("ralt", "lalt")
+
+    if ctrl or shift or alt then return end
+
     if key == "left" then
         trail = trail - 1
     elseif key == "right" then
