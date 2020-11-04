@@ -51,6 +51,10 @@ scene.load = function(w, h)
     scene.strWidth = love.graphics.getFont():getWidth(str:format(1000, 1000, 10.99))
 end
 
+scene.resize = function(w, h)
+    WIDTH, HEIGHT = w, h
+end
+
 scene.update = function(dt, fps)
     frame = wrap(frame + 1, frames)
     scene.str = str:format(trail, size, frames / fps)

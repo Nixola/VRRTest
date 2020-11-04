@@ -28,6 +28,10 @@ scene.load = function(w, h)
     scene.strWidth = love.graphics.getFont():getWidth(str:format(1000, 1000))
 end
 
+scene.resize = function(w, h)
+    WIDTH, HEIGHT = w, h
+end
+
 scene.update = function(dt, fps)
     for i = 1, num do
         bars[i] = (bars[i] + speed * dt * WIDTH / 20) % (WIDTH)
@@ -50,7 +54,7 @@ scene.keypressed = function(key, keycode, isRepeat)
     local alt = love.keyboard.isDown("ralt", "lalt")
 
     if ctrl or shift or alt then return end
-    
+
     if key == "-" then
         num = num - 1
         num = math.max(1, num)

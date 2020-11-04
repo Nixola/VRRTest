@@ -46,7 +46,7 @@ local setDisplay = function(n)
     display = n
     displays = new_displays
     for i, scene in ipairs(scenes) do
-        scene.load(WIDTH - scenes.x, HEIGHT - scenes.y)
+        scene.resize(WIDTH - scenes.x, HEIGHT - scenes.y)
     end
 end
 
