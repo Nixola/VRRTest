@@ -45,7 +45,8 @@ selected scene: %d (%s)
 
 Freesync will only work when the application is fullscreen on Linux.
 Busy waiting is more precise, but much heavier on processor and battery.
-Vsync should eliminate tearing, but increases input lag and adds no smoothness.]]
+Vsync should eliminate tearing, but increases input lag and adds no smoothness.
+You can quit this program with the Escape or Q keys.]]
 local sceneStr
 
 
@@ -191,6 +192,8 @@ love.keypressed = function(key, keycode)
         elseif key == "r" then
             random = not random
             randomTime = 0
+        elseif key == "escape" or key == "q" then
+            love.event.quit()
         end
     end
     if tonumber(key) and scenes[tonumber(key)] then
