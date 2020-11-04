@@ -14,7 +14,7 @@ Assuming the runtime is installed and in PATH, you can run it with `love <dir>`,
 * Number keys will select a scene to be displayed. Each scene has additional controls, shown on the right.
 
 ## Scenes
-As of version 2.0.0, VRRTest supports different scenes, of which tehre are currently two. (A 100% increase over previous versions!)
+As of version 2.0.0, VRRTest supports different scenes, of which there are currently two. (A 100% increase over previous versions!)
 
 ### Bars
 The first and default scene, Bars, is easy on the eyes (I'm not claiming it looks good; you'll see what I mean in the screenshots section) and easily allows the user to detect screen tearing, by displaying vertical bars moving towards the right. The number and speed of said bars are tunable by the user.
