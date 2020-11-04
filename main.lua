@@ -43,6 +43,9 @@ local setDisplay = function(n)
     love.window.setMode(WIDTH, HEIGHT, {display = n, fullscreen = fullscreen, vsync = vsync and 1 or 0})
     display = n
     displays = new_displays
+    for i, scene in ipairs(scenes) do
+        scene.load(WIDTH, HEIGHT - y)
+    end
 end
 
 
