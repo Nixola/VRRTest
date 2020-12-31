@@ -49,4 +49,12 @@ color.update = function(dt)
     love.graphics.setBackgroundColor(current.bg)
 end
 
+color.bg = function()
+    return current.bg
+end
+
+color.fg = function()
+    return current.fg
+end
+
 return color

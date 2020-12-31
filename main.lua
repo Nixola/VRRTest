@@ -13,6 +13,9 @@ local fullscreen
 
 local vsync
 
+local logLevel, logLevels
+local deltaTimes, logLines, logWidth
+
 local WIDTH, HEIGHT
 
 local scenes = {}
@@ -61,6 +64,7 @@ vsync: %s (toggle with s)
 fluctuating: %s (toggle with f, change max with ctrl + up/down arrow, change speed with ctrl + left/right arrow)
 random stutter: %s [%dms] (toggle with r, change max amount with alt + up/down arrow, shift to change faster)
 display: %d/%d (switch with alt + left/right arrow)
+log level: %d/%d (increase with l, wraps around)
 selected scene: %d (%s)
 
 Freesync will only work when the application is fullscreen on Linux.
@@ -97,6 +101,12 @@ love.load = function()
     frameTime = 1 / fps
     lastUpdate = 0
 
+    logLevel = 0
+    logLevels = 3 -- 0-2
+    deltaTimes = {}
+    logLines = math.floor((HEIGHT - scenes.y) / love.graphics.getFont():getHeight())
+    logWidth = love.graphics.getFont():getWidth("00000 µs") + 16
+
     fullscreen = flags.fullscreen
     vsync = flags.vsync > 0
     love.keyboard.setKeyRepeat(true)
@@ -130,6 +140,10 @@ love.update = function(dt)
 
     scenes[scene].update(dt, fps)
     color.update(dt)
+    if logLevel > 1 then
+        table.insert(deltaTimes, 1, string.format("%d µs", dt * 1000000))
+        deltaTimes[logLines + 1] = nil
+    end
 end
 
 
@@ -145,12 +159,27 @@ love.draw = function()
         fstr,
         tostring(random), randomAmount,
         display, displays,
+        logLevel, logLevels - 1,
         scene,
         scenes[scene].name)
 
     love.graphics.print(str, 8, 8)
     love.graphics.print(scenes[scene].str, WIDTH - scenes[scene].strWidth - 8, 8)
+    if logLevel > 0 then
+        love.graphics.printf(table.concat({love.graphics.getRendererInfo()}, "\n"), 0, scenes.y - love.graphics.getFont():getHeight() * 5, WIDTH - 8, "right")
+    end
+
     scenes[scene].draw(scenes.x, scenes.y)
+
+    if logLevel > 1 then
+        --love.graphics.setColor(.75, 0, 0)
+        love.graphics.setColor(color.bg())
+        love.graphics.rectangle("fill", WIDTH - logWidth, scenes.y, logWidth + 1, HEIGHT)
+        love.graphics.setColor(color.fg())
+        for i, ms in ipairs(deltaTimes) do
+            love.graphics.printf(ms, 0, scenes.y + (i - 1) * love.graphics.getFont():getHeight(), WIDTH - 8, "right")
+        end
+    end
 
 end
 
@@ -222,6 +251,8 @@ love.keypressed = function(key, keycode)
             randomTime = 0
         elseif key == "escape" or key == "q" then
             love.event.quit()
+        elseif key == "l" then
+            logLevel = (logLevel + 1) % logLevels
         end
     end
     if tonumber(key) and scenes[tonumber(key)] then

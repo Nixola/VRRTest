@@ -11,6 +11,7 @@ Assuming the runtime is installed and in PATH, you can run it with `love <dir>`,
 * `f` toggles fluctuating framerate; `Ctrl+↑/↓` changes the maximum framerate, `Ctrl+←/→` changes the fluctuation speed.  
 * `r` toggles random stutter; `Alt+↑/↓` changes the amount of stuttering. Hold Shift as well to change faster.
 * `Alt+←/→` changes the monitor the tool will be displayed on.
+* `l` increases the amount of information shown on the screen, from nothing, to GPU-related information, to a list of frametimes. Wraps around.
 * Number keys will select a scene to be displayed. Each scene has additional controls, shown on the right.
 
 ## Scenes
