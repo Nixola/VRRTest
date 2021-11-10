@@ -16,6 +16,8 @@ local vsync
 local logLevel, logLevels
 local deltaTimes, logLines, logWidth
 
+local skipDrawing = false
+
 local WIDTH, HEIGHT
 
 local scenes = {}
@@ -138,7 +140,7 @@ love.update = function(dt)
         randomTime = (love.math.random() - 0.5 ) * randomAmount/1000
     end
 
-    scenes[scene].update(dt, fps)
+    skipDrawing = scenes[scene].update(dt, fps)
     color.update(dt)
     if logLevel > 1 then
         table.insert(deltaTimes, 1, string.format("%d µs", dt * 1000000))
@@ -148,6 +150,11 @@ end
 
 
 love.draw = function()
+    if skipDrawing then 
+        love.graphics.setColor(0,0,0)
+        love.graphics.rectangle("fill", -1, -1, WIDTH + 2, HEIGHT + 2)
+        return
+    end
     local fstr = fluctuating and ("true [max: %d, speed: %d, current: %d]"):format(fpsMax, fpsSpeed, fpsCur) or "false"
 
     local str = string.format(str, 
@@ -169,7 +176,9 @@ love.draw = function()
         love.graphics.printf(table.concat({love.graphics.getRendererInfo()}, "\n"), 0, scenes.y - love.graphics.getFont():getHeight() * 5, WIDTH - 8, "right")
     end
 
+    love.graphics.push()
     scenes[scene].draw(scenes.x, scenes.y)
+    love.graphics.pop()
 
     if logLevel > 1 then
         --love.graphics.setColor(.75, 0, 0)
