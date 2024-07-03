@@ -55,20 +55,28 @@ scene.keypressed = function(key, keycode, isRepeat)
 
     if ctrl or shift or alt then return end
 
-    if key == "-" then
-        num = num - 1
-        num = math.max(1, num)
-        newBars()
-    elseif key == "+" then
-        num = num + 1
-        num = math.max(1, num)
-        newBars()
-    elseif key == "left" then
+    if key == "left" then
         speed = speed - 1
     elseif key == "right" then
         speed = speed + 1
     end
     speed = math.max(1, speed)
+end
+
+scene.textinput = function(str)
+    local ctrl = love.keyboard.isDown("lctrl", "rctrl")
+    local shift = love.keyboard.isDown("lshift", "rshift")
+    local alt = love.keyboard.isDown("ralt", "lalt")
+
+    if str == "-" then
+        num = num - 1
+        num = math.max(1, num)
+        newBars()
+    elseif str == "+" then
+        num = num + 1
+        num = math.max(1, num)
+        newBars()
+    end
 end
 
 return scene

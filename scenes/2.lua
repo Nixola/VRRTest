@@ -90,9 +90,18 @@ scene.keypressed = function(key, keycode, isRepeat)
         trail = trail - 1
     elseif key == "right" then
         trail = trail + 1
-    elseif key == "+" then
+    end
+    sanitize()
+end
+
+scene.textinput = function(str)
+    local ctrl = love.keyboard.isDown("lctrl", "rctrl")
+    local shift = love.keyboard.isDown("lshift", "rshift")
+    local alt = love.keyboard.isDown("ralt", "lalt")
+
+    if str == "+" then
         size = size + 1
-    elseif key == "-" then
+    elseif str == "-" then
         size = size - 1
     end
     sanitize()

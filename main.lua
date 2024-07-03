@@ -263,3 +263,8 @@ love.keypressed = function(key, keycode)
     scenes[scene].keypressed(key, keycode)
     sanitize()
 end
+
+love.textinput = function(str)
+    scenes[scene].textinput(str)
+    sanitize()
+end
