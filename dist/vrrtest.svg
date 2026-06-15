@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="128mm"
+   height="128mm"
+   viewBox="0 0 128 128"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
+   sodipodi:docname="vrrtest.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.7349551"
+     inkscape:cx="218.16127"
+     inkscape:cy="312.40002"
+     inkscape:window-width="1920"
+     inkscape:window-height="1027"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <clipPath
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath27">
+      <g
+         inkscape:label="Clip"
+         id="use27" />
+    </clipPath>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:#606060;stroke:none;stroke-width:8;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       id="rect1"
+       width="120"
+       height="120"
+       x="4"
+       y="4"
+       rx="16"
+       ry="16" />
+    <g
+       id="g28"
+       transform="translate(0,7.9999999)">
+      <path
+         id="rect2"
+         style="fill:#a0a0a0;fill-opacity:1;stroke:none;stroke-width:5.09901;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1"
+         d="M 19.999813 32.000143 L 19.999813 64.000256 L 16.000057 64.000256 L 16.000057 116.00018 L 32.000114 116.00018 L 32.000114 73.327852 L 32.000114 64.000256 L 35.99987 64.000256 L 35.99987 32.000143 L 19.999813 32.000143 z "
+         inkscape:label="bar-1" />
+      <path
+         id="rect2-6"
+         style="fill:#a0a0a0;fill-opacity:1;stroke:none;stroke-width:5.09901;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1"
+         d="M 59.999955 32.000143 L 59.999955 64.000256 L 56.000199 64.000256 L 56.000199 116.00018 L 72.000256 116.00018 L 72.000256 72.357369 L 72.000256 64.000256 L 76.000012 64.000256 L 76.000012 32.000143 L 59.999955 32.000143 z "
+         inkscape:label="bar-2" />
+      <path
+         id="rect2-6-1"
+         style="fill:#a0a0a0;fill-opacity:1;stroke:none;stroke-width:5.09901;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1"
+         d="M 100.0001 32.000143 L 100.0001 64.000256 L 95.999825 64.000256 L 95.999825 116.00018 L 111.99988 116.00018 L 111.99988 69.337915 L 111.99988 64.000256 L 116.00015 64.000256 L 116.00015 32.000143 L 100.0001 32.000143 z "
+         inkscape:label="bar-3" />
+    </g>
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#303030;stroke-width:4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:7;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1-7"
+       width="120"
+       height="120"
+       x="4"
+       y="4"
+       rx="16"
+       ry="16" />
+  </g>
+</svg>
