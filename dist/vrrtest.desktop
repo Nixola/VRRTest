@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=vrrTest
+Comment=Variable refresh rate test utility.
+Exec=/home/runner/work/love-appimage-source/love-appimage-source/installdir/bin/vrrTest
+Type=Application
+Categories=Development;Game;
+Terminal=false
+Icon=vrrtest
+NoDisplay=true
