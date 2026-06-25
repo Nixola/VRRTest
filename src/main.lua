@@ -79,6 +79,9 @@ love.load = function()
 
     WIDTH, HEIGHT = love.graphics.getDimensions()
 
+    local fontSize = math.max(8, HEIGHT/90)
+    love.graphics.setFont(love.graphics.newFont(fontSize)) -- Ugly hack until LÖVE 12 when we get DPI scale awareness.
+
     local flags = select(3, love.window.getMode())
 
     scenes.y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight() + 8
