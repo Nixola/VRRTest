@@ -140,6 +140,13 @@ end
 
 love.update = function(dt)
 
+    if quitting then
+        quitting = quitting + dt
+        if quitting > 1 then
+            love.event.quit()
+        end
+    end
+
     if love.busy then
         while lastUpdate + frameTime + randomTime > love.timer.getTime() do end
     else
@@ -362,6 +369,8 @@ love.gamepadpressed = function(_, button)
                 scenes[scene].gamepadEnter()
             end
         end
+    elseif button == "b" or button == "start" then
+        quitting = 0
     end
     if gamepad.selected <= 0 then
         gamepad.selected = gamepad.max + scenes[scene].controls
@@ -383,5 +392,7 @@ love.gamepadreleased = function(_, button)
         gamepad.left = false
     elseif button == "dpright" then
         gamepad.right = false
+    elseif button == "b" or button == "start" then
+        quitting = nil
     end
 end
