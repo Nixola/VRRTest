@@ -1,16 +1,27 @@
 local scene = {}
 scene.name = "Bars"
+scene.controls = 2
 scene.color = {}
-scene.color.fg = {5/8, 5/8, 5/8}
-scene.color.bg = {3/8, 3/8, 3/8}
+scene.color.fg =     {5/8, 5/8, 5/8}
+scene.color.active = {7/8, 7/8, 3/8}
+scene.color.bg =     {3/8, 3/8, 3/8}
 
 local speed, num, bars, barWidth
 
 local WIDTH, HEIGHT
 
-local str = [[
-speed: %d (change with left/right arrow)
-number of bars: %d (change with -/+)]]
+local lines = {
+"speed: %d (change with left/right arrow)\n",
+"number of bars: %d (change with -/+)\n",
+[[
+
+Vertical bars quickly moving horizontally,
+this is a pretty classic and effective test
+for screen tearing, which is readily apparent
+if any bars appear jagged.
+If the movement looks stuttery and not smooth,
+variable refresh rate is probably not working.]]
+}
 
 newBars = function()
     barWidth = WIDTH / (num * 3)
@@ -25,18 +36,37 @@ scene.load = function(w, h)
     num = 3
     bars = {}
     newBars()
-    scene.strWidth = love.graphics.getFont():getWidth(str:format(1000, 1000))
+    local font = love.graphics.getFont()
+    local width1 = font:getWidth(lines[1]:format(1000));
+    local width2 = font:getWidth(lines[2]:format(1000));
+    local width3 = font:getWidth(lines[3]);
+    scene.strWidth = math.max(width1, width2, width3);
 end
 
 scene.resize = function(w, h)
     WIDTH, HEIGHT = w, h
 end
 
-scene.update = function(dt, fps)
+scene.update = function(dt, fps, gamepadUpdates)
+    if gamepadUpdates > 0  and gamepad.selected > gamepad.max then
+        local m = gamepad.left and -gamepadUpdates or gamepadUpdates
+        if gamepad.selected == 12 then
+            speed = speed + m
+            speed = math.max(1, speed)
+        elseif gamepad.selected == 13 then
+            num = num + m
+            num = math.max(1, num)
+            newBars()
+        end
+    end
     for i = 1, num do
         bars[i] = (bars[i] + speed * dt * WIDTH / 20) % (WIDTH)
     end
-    scene.str = str:format(speed, num)
+    scene.str = {
+        colors[12], lines[1]:format(speed),
+        colors[13], lines[2]:format(num),
+        colors[0],  lines[3]
+    }
 end
 
 scene.draw = function(x, y)

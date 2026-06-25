@@ -1,6 +1,8 @@
 require "run"
+require "gamepad"
 
 local color = require "colorFade"
+local lines = require "lines"
 
 local fps, frameTime, lastUpdate
 local fpsMax, fpsTimer, fluctuating, fpsSpeed
@@ -53,24 +55,29 @@ local setDisplay = function(n)
     end
 end
 
+lines.format = function(self)
+    local fstr = fluctuating and ("true [%smax: %d, %sspeed: %d, current: %d]"):format(
+        gamepad.highlight(6), fpsMax,
+        gamepad.highlight(7), fpsSpeed,
+        fpsCur
+    ) or "false"
+    return {
+        colors[0],  self[1]:format(love.timer.getFPS()),
+        colors[1],  self[2]:format(fps),
+        colors[2],  self[3]:format(tostring(fullscreen)),
+        colors[3],  self[4]:format(tostring(love.busy)),
+        colors[4],  self[5]:format(tostring(vsync)),
+        colors[5],  self[6]:format(fstr),
+        colors[8],  self[7]:format(tostring(random), randomAmount),
+        colors[9],  self[8]:format(display, displays),
+        colors[10], self[9]:format(logLevel, logLevels - 1),
+        colors[11], self[10]:format(scene, #scenes, scenes[scene].name),
+        colors[0], self[11]
+    }
+end
 
+colors = {}
 
-local str = [[
-actual FPS: %d
-target FPS: %d (change with up/down arrow)
-fullscreen: %s (toggle with ctrl+f)
-busy wait: %s (toggle with b)
-vsync: %s (toggle with s)
-fluctuating: %s (toggle with f, change max with ctrl + up/down arrow, change speed with ctrl + left/right arrow)
-random stutter: %s [%dms] (toggle with r, change max amount with alt + up/down arrow, shift to change faster)
-display: %d/%d (switch with alt + left/right arrow)
-log level: %d/%d (increase with l, wraps around)
-selected scene: %d (%s)
-
-Freesync will only work when the application is fullscreen on Linux.
-Busy waiting is more precise, but much heavier on processor and battery.
-Vsync should eliminate tearing, but increases input lag and adds no smoothness.
-You can quit this program with the Escape or Q keys.]]
 local sceneStr
 
 love.load = function()
@@ -84,7 +91,7 @@ love.load = function()
 
     local flags = select(3, love.window.getMode())
 
-    scenes.y = (#select(2, love.graphics.getFont():getWrap(str, WIDTH)) + 1) * love.graphics.getFont():getHeight() + 8
+    scenes.y = lines:getHeight(WIDTH) + 8
 
     fps = flags.refreshrate - 5
     fps = (fps > 0) and fps or 56
@@ -116,7 +123,18 @@ love.load = function()
 
     loadScenes(WIDTH - scenes.x, HEIGHT - scenes.y)
 
-    color.setColor(scenes[scene].color.fg, scenes[scene].color.bg)
+    local maxControls = 0
+    for i, v in ipairs(scenes) do
+        maxControls = math.max(maxControls, v.controls)
+    end
+    for i = 0, gamepad.max + maxControls do
+        colors[i] = {1, 1, 1}
+    end
+    colors[6] = colors[5]
+    colors[7] = colors[5]
+
+
+    color.setColor(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
 end
 
 
@@ -130,7 +148,43 @@ love.update = function(dt)
         end
     end
     lastUpdate = love.timer.getTime()
-
+    local gamepadRepeats = gamepad.update(dt)
+    if gamepadRepeats > 0 then
+        local m = gamepad.left and -gamepadRepeats or gamepadRepeats
+        if gamepad.selected == 1 then
+            fps = fps + m
+        elseif gamepad.selected == 6 then
+            fpsMax = fpsMax + m
+        elseif gamepad.selected == 7 then
+            fpsSpeed = fpsSpeed + m
+        elseif gamepad.selected == 8 then
+            randomAmount = randomAmount + m
+        elseif gamepad.selected == 9 then
+            setDisplay(display + m)
+            gamepad.repeating = false
+        elseif gamepad.selected == 10 then
+            logLevel = (logLevel + m) % logLevels
+        elseif gamepad.selected == 11 then
+            scene = (scene + m - 1) % #scenes + 1
+            color.setTarget(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
+        end
+        sanitize()
+    end
+    local fg = color.fg()
+    local active = color.active()
+    for i = 0, #colors do
+        local v = colors[i]
+        v[1] = fg[1]
+        v[2] = fg[2]
+        v[3] = fg[3]
+    end
+    if gamepad.active then
+        local v = colors[gamepad.selected]
+        v[1] = active[1] 
+        v[2] = active[2]
+        v[3] = active[3]
+    end
+        
     fpsTimer = fpsTimer + dt * fpsSpeed / 10
     if fluctuating then
         fpsCur = fps + (math.sin(fpsTimer)/2 + 0.5) * (fpsMax - fps)
@@ -141,7 +195,7 @@ love.update = function(dt)
         randomTime = (love.math.random() - 0.5 ) * randomAmount/1000
     end
 
-    scenes[scene].update(dt, fps)
+    scenes[scene].update(dt, fps, gamepadRepeats)
     color.update(dt)
     if logLevel > 1 then
         table.insert(deltaTimes, 1, string.format("%d µs", dt * 1000000))
@@ -151,23 +205,11 @@ end
 
 
 love.draw = function()
-    local fstr = fluctuating and ("true [max: %d, speed: %d, current: %d]"):format(fpsMax, fpsSpeed, fpsCur) or "false"
-
-    local str = string.format(str, 
-        love.timer.getFPS(),
-        fps,
-        tostring(fullscreen),
-        tostring(love.busy),
-        tostring(vsync),
-        fstr,
-        tostring(random), randomAmount,
-        display, displays,
-        logLevel, logLevels - 1,
-        scene,
-        scenes[scene].name)
-
+    local str = lines:format()
+    love.graphics.setColor(1, 1, 1)
     love.graphics.print(str, 8, 8)
     love.graphics.print(scenes[scene].str, WIDTH - scenes[scene].strWidth - 8, 8)
+    love.graphics.setColor(color.fg())
     if logLevel > 0 then
         love.graphics.printf(table.concat({love.graphics.getRendererInfo()}, "\n"), 0, scenes.y - love.graphics.getFont():getHeight() * 5, WIDTH - 8, "right")
     end
@@ -260,7 +302,7 @@ love.keypressed = function(key, keycode)
     end
     if tonumber(key) and scenes[tonumber(key)] then
         scene = tonumber(key)
-        color.setTarget(scenes[scene].color.fg, scenes[scene].color.bg)
+        color.setTarget(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
         return
     end
     scenes[scene].keypressed(key, keycode)
@@ -270,4 +312,76 @@ end
 love.textinput = function(str)
     scenes[scene].textinput(str)
     sanitize()
+end
+
+love.gamepadpressed = function(_, button)
+    gamepad.active = true
+    if button == "dpup" then
+        gamepad.selected = gamepad.selected - 1
+    elseif button == "dpdown" then
+        gamepad.selected = gamepad.selected + 1
+    elseif button == "dpleft" then
+        gamepad.left = true
+        gamepad.timer = 0
+    elseif button == "dpright" then
+        gamepad.right = true
+        gamepad.timer = 0
+    elseif button == "a" then
+        if gamepad.selected == 2 then
+            if fullscreen then
+                love.window.setFullscreen(false)
+                love.window.setPosition(1, 1)
+            else
+                love.window.setFullscreen(true)
+                love.window.setPosition(0, 0)
+            end
+            fullscreen = not fullscreen
+        elseif gamepad.selected == 3 then
+            love.busy = not love.busy
+        elseif gamepad.selected == 4 then
+            local w, h, flags = love.window.getMode()
+            flags.vsync = (flags.vsync == 0) and 1 or 0
+            love.window.setMode(w, h, flags)
+            flags = select(3, love.window.getMode())
+            vsync = flags.vsync > 0
+        elseif gamepad.selected >= 5 and gamepad.selected <= 7 then
+            fluctuating = not fluctuating
+            fpsTimer = 0
+        elseif gamepad.selected == 8 then
+            random = not random
+            randomTime = 0
+        elseif gamepad.selected == 9 then
+            setDisplay(display + 1)
+        elseif gamepad.selected == 10 then
+            logLevel = (logLevel + 1) % logLevels
+        elseif gamepad.selected == 11 then
+            scene = scene % #scenes + 1
+            color.setTarget(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
+        elseif gamepad.selected > gamepad.max then
+            if scenes[scene].gamepadEnter then
+                scenes[scene].gamepadEnter()
+            end
+        end
+    end
+    if gamepad.selected <= 0 then
+        gamepad.selected = gamepad.max + scenes[scene].controls
+    end
+    if gamepad.selected > gamepad.max + scenes[scene].controls then
+        gamepad.selected = 1
+    end
+    if gamepad.selected == 6 and not fluctuating then
+        gamepad.selected = 8
+    end
+    if gamepad.selected == 7 and not fluctuating then
+        gamepad.selected = 5
+    end
+end
+
+love.gamepadreleased = function(_, button)
+    gamepad.active = true
+    if button == "dpleft" then
+        gamepad.left = false
+    elseif button == "dpright" then
+        gamepad.right = false
+    end
 end

@@ -1,16 +1,19 @@
 local scene = {}
 scene.name = "Squares"
+scene.controls = 2
 scene.color = {}
-scene.color.fg = {1, 1, 1}
-scene.color.bg = {0, 0, 0}
+scene.color.fg =     {1,  1,  1}
+scene.color.active = {.6, .6, 1}
+scene.color.bg =     {0,  0,  0}
 
 local frame, size, width, height, frames, trail, gcd
 local WIDTH, HEIGHT
 
-local str = [[
-trail (frames): %d (change with left/right arrow)
-square size (px): %d (change with +/-)
-period (seconds): ~%.2f (results from size)
+local lines = {
+"trail (frames): %d (change with left/right arrow)\n",
+"square size (px): %d (change with +/-)\n",
+"period (seconds): ~%.2f (results from size)\n",
+[[
 
 trail=0 makes it easier to use a video or a
 long-exposure picture (lasting up to the shown period)
@@ -18,6 +21,7 @@ to see repeated or dropped frames. Higher values can
 help show latency between monitors or other ways of
 mirroring a screen, when the same istance of this
 program is displayed on all of them.]]
+}
 
 gcd = function(n1, n2)
     if n1 % n2 == 0 then
@@ -48,7 +52,12 @@ scene.load = function(w, h)
     height = math.ceil(HEIGHT / size)
     frames = width * height
     trail = 0
-    scene.strWidth = love.graphics.getFont():getWidth(str:format(1000, 1000, 10.99))
+    local font = love.graphics.getFont()
+    local width1 = font:getWidth(lines[1]:format(1000));
+    local width2 = font:getWidth(lines[2]:format(1000));
+    local width3 = font:getWidth(lines[3]:format(10.99));
+    local width4 = font:getWidth(lines[4]);
+    scene.strWidth = math.max(width1, width2, width3, width4)
 end
 
 scene.resize = function(w, h)
@@ -56,9 +65,23 @@ scene.resize = function(w, h)
     sanitize()
 end
 
-scene.update = function(dt, fps)
+scene.update = function(dt, fps, gamepadUpdates)
+    if gamepadUpdates > 0 and gamepad.selected > gamepad.max then
+        local m = gamepad.left and -gamepadUpdates or gamepadUpdates
+        if gamepad.selected == 12 then
+            trail = trail + m
+        elseif gamepad.selected == 13 then
+            size = size + m
+        end
+        sanitize()
+    end
     frame = wrap(frame + 1, frames)
-    scene.str = str:format(trail, size, frames / fps)
+    scene.str = {
+        colors[12], lines[1]:format(trail),
+        colors[13], lines[2]:format(size),
+        colors[0],  lines[3]:format(frames / fps),
+        colors[0],  lines[4]
+    }
 end
 
 scene.draw = function(x, y)
