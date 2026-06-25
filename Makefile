@@ -1,6 +1,6 @@
 love: build/vrrTest.love
-build/vrrTest.love: src/colorFade.lua src/conf.lua src/main.lua src/run.lua src/scenes
-	cd src ; zip -r ../build/vrrTest.love colorFade.lua conf.lua main.lua run.lua scenes
+build/vrrTest.love: src/colorFade.lua src/conf.lua src/main.lua src/run.lua src/scenes src/gamepad.lua src/lines.lua
+	cd src ; zip -r ../build/vrrTest.love colorFade.lua conf.lua main.lua run.lua scenes gamepad.lua lines.lua
 
 win: build/vrrTest.love build/win/vrrTest-win-x86_64.zip build/win/love.exe
 build/win/vrrTest-win-x86_64.zip:
