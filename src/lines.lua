@@ -14,7 +14,9 @@ lines = {
 Freesync will only work when the application is fullscreen on Linux.
 Busy waiting is more precise, but much heavier on processor and battery.
 Vsync should eliminate tearing, but it increases input lag and it adds no smoothness.
-You can quit this program with the Escape or Q keys.]]
+If you're using a gamepad, you can choose a setting with the up and down arrows,
+then toggle it with the A (Xbox) or X (Sony) button, or tweak it with left or right.
+You can quit this program with the Escape or Q keys, or holding Start or B/Circle.]]
 }
 lines.getHeight = function(self, w)
     local font = love.graphics.getFont()
