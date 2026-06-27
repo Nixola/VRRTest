@@ -134,7 +134,7 @@ love.load = function()
     colors[7] = colors[5]
 
 
-    color.setColor(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
+    color.setColor(scenes[scene].color.fg, scenes[scene].color.text, scenes[scene].color.active, scenes[scene].color.bg)
 end
 
 
@@ -173,17 +173,17 @@ love.update = function(dt)
             logLevel = (logLevel + m) % logLevels
         elseif gamepad.selected == 11 then
             scene = (scene + m - 1) % #scenes + 1
-            color.setTarget(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
+            color.setTarget(scenes[scene].color.fg, scenes[scene].color.text, scenes[scene].color.active, scenes[scene].color.bg)
         end
         sanitize()
     end
-    local fg = color.fg()
+    local text = color.text()
     local active = color.active()
     for i = 0, #colors do
         local v = colors[i]
-        v[1] = fg[1]
-        v[2] = fg[2]
-        v[3] = fg[3]
+        v[1] = text[1]
+        v[2] = text[2]
+        v[3] = text[3]
     end
     if gamepad.active then
         local v = colors[gamepad.selected]
@@ -309,7 +309,7 @@ love.keypressed = function(key, keycode)
     end
     if tonumber(key) and scenes[tonumber(key)] then
         scene = tonumber(key)
-        color.setTarget(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
+        color.setTarget(scenes[scene].color.fg, scenes[scene].color.text, scenes[scene].color.active, scenes[scene].color.bg)
         return
     end
     scenes[scene].keypressed(key, keycode)
@@ -363,7 +363,7 @@ love.gamepadpressed = function(_, button)
             logLevel = (logLevel + 1) % logLevels
         elseif gamepad.selected == 11 then
             scene = scene % #scenes + 1
-            color.setTarget(scenes[scene].color.fg, scenes[scene].color.active, scenes[scene].color.bg)
+            color.setTarget(scenes[scene].color.fg, scenes[scene].color.text, scenes[scene].color.active, scenes[scene].color.bg)
         elseif gamepad.selected > gamepad.max then
             if scenes[scene].gamepadEnter then
                 scenes[scene].gamepadEnter()

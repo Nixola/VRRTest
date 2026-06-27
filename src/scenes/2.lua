@@ -3,7 +3,8 @@ scene.name = "Squares"
 scene.controls = 2
 scene.color = {}
 scene.color.fg =     {1,  1,  1}
-scene.color.active = {.6, .6, 1}
+scene.color.text =   {5/8, 5/8, 5/8}
+scene.color.active = {7/8, 7/8, 3/8}
 scene.color.bg =     {0,  0,  0}
 
 local frame, size, width, height, frames, trail, gcd

@@ -3,6 +3,7 @@ scene.name = "Bars"
 scene.controls = 2
 scene.color = {}
 scene.color.fg =     {5/8, 5/8, 5/8}
+scene.color.text =   {5/8, 5/8, 5/8}
 scene.color.active = {7/8, 7/8, 3/8}
 scene.color.bg =     {3/8, 3/8, 3/8}
 
