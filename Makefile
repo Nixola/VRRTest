@@ -15,9 +15,9 @@ lin: build/vrrTest.love build/lin/squashfs-root/
 	cp dist/vrrtest.svg build/lin/squashfs-root/vrrtest.svg
 	rm build/lin/squashfs-root/love.svg
 	cp dist/AppRun build/lin/squashfs-root/
-	appimagetool build/lin/squashfs-root build/vrrTest.AppImage
+	appimagetool build/lin/squashfs-root build/vrrTest-x86_64.AppImage
 
 clean:
-	-rm build/vrrTest.love build/win/vrrTest-win-x86_64.zip build/lin/vrrTest-x86_64.AppImage
+	-rm build/vrrTest.love build/vrrTest-win-x86_64.zip build/vrrTest-x86_64.AppImage
 
 .PHONY: win love clean lin
